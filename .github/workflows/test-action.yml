@@ -26,7 +26,7 @@ jobs:
       - name: Test apt-cache without update
         uses: ./
         with:
-          packages: 'ansible'
+          packages: ansible fail2ban
           # run_update defaults to false
       
       - name: Verify installation
