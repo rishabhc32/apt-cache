@@ -23,23 +23,11 @@ runs:
     - name: Setup Apt for caching
       shell: bash
       run: |
-        echo "::group::Setup Apt for caching"
-        echo "Packages to install: ${{ inputs.packages }}"
-        echo "Run update: ${{ inputs.run_update }}"
-        
         if ${{ inputs.run_update }}; then
-          echo "Running apt-get update..."
           sudo apt-get update -yq
-          echo "apt-get update completed"
-        else
-          echo "Skipping apt-get update as run_update is false"
         fi
-        
-        echo "Calculating package hash..."
         aptHash(){ echo "$1-$(apt-cache policy "$1" | grep -oP '(?<=Candidate:\s)(.+)')"; }
         echo "packagesHash=$(echo "${{ inputs.packages }}" | xargs -rn1 | tr '\n' '-'  | md5sum | cut -f 1 -d ' ')" >> $GITHUB_ENV
-        echo "Package hash: $packagesHash"
-        echo "::endgroup::"
     - name: Cache deb files
       uses: actions/cache@v4
       with:
@@ -50,31 +38,10 @@ runs:
     - name: Restore deb files from cache
       shell: bash
       run: |
-        echo "::group::Restore and install packages"
-        echo "Cache path: ${{ inputs.path }}"
-        
-        echo "Cleaning apt cache..."
         sudo apt-get clean -yq
-        
         if compgen -G "${{ inputs.path }}/*.deb" > /dev/null; then
-          echo "Found deb files in cache, copying to apt archives..."
           sudo cp -l ${{ inputs.path }}/*.deb /var/cache/apt/archives
-          echo "Copied cached deb files to apt archives"
-        else
-          echo "No cached deb files found"
         fi
-        
-        echo "Installing packages: ${{ inputs.packages }}..."
         sudo apt-get install -yq ${{ inputs.packages }}
-        echo "Package installation completed"
-        
-        echo "Listing installed package archives..."
-        ls -la /var/cache/apt/archives/ | grep ".deb"
-        
-        echo "Creating cache directory..."
         mkdir -p ${{ inputs.path }}
-        
-        echo "Copying new deb files to cache..."
         sudo cp -l /var/cache/apt/archives/*.deb ${{ inputs.path }}
-        echo "Cache updated with new deb files"
-        echo "::endgroup::"
