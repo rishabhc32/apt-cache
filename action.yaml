@@ -27,6 +27,7 @@ runs:
         sudo apt-get update -yq
 
     - name: Setup Apt for caching
+      id: setup-apt-cache
       shell: bash
       run: |
         versions=$(for pkg in ${{ inputs.packages }}; do 
@@ -37,14 +38,14 @@ runs:
         echo "Package versions: " $versions
         
         hash=$(echo "$versions" | tr '\n' '-' | sha256sum | cut -d ' ' -f1)
-        echo "packagesHash=$hash" >> $GITHUB_ENV
+        echo "packages-hash=$hash" >> $GITHUB_OUTPUT
 
     - name: Cache deb files
       id: cache
       uses: actions/cache@v4
       with:
         path: ${{ inputs.path }}
-        key: apt-cache-${{ env.packagesHash }}
+        key: apt-cache-${{ steps.setup-apt-cache.outputs.packages-hash }}
 
     - name: Restore deb files from cache
       shell: bash

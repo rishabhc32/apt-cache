@@ -2,6 +2,9 @@ name: Test apt-cache Action
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - master
 
 jobs:
   test-with-update:
