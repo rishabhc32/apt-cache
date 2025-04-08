@@ -1,4 +1,4 @@
-# apt-cache
+# apt-package-cache
 
 Cache Apt Packages for GitHub Actions
 
@@ -20,7 +20,7 @@ This action allows you to install and cache apt packages to speed up your GitHub
 
 ```yaml
 - name: Install packages with caching
-  uses: rishabhc32/apt-cache
+  uses: rishabhc32/apt-package-cache@v1.0.1
   with:
     packages: ansible fail2ban
 ```
@@ -29,7 +29,7 @@ This action allows you to install and cache apt packages to speed up your GitHub
 
 ```yaml
 - name: Install packages with update
-  uses: rishabhc32/apt-cache
+  uses: rishabhc32/apt-package-cache@v1.0.1
   with:
     packages: ansible
     run-update: true
@@ -39,7 +39,7 @@ This action allows you to install and cache apt packages to speed up your GitHub
 
 ```yaml
 - name: Install packages with custom cache path
-  uses: rishabhc32/apt-cache
+  uses: rishabhc32/apt-package-cache@v1.0.1
   with:
     packages: ansible fail2ban
     path: .custom-apt-cache

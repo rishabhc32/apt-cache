@@ -1,4 +1,4 @@
-name: Test apt-cache Action
+name: Test apt-package-cache Action
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Test apt-cache with update
+      - name: Test apt-package-cache with update
         uses: ./
         with:
           packages: 'ansible'
@@ -26,7 +26,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Test apt-cache without update
+      - name: Test apt-package-cache without update
         uses: ./
         with:
           packages: ansible fail2ban
