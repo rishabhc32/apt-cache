@@ -12,13 +12,20 @@ inputs:
     description: Location to cache deb files
     required: false
     default: .aptcache
+  run_update:
+    description: Whether to run apt-get update
+    required: false
+    default: false
+    type: boolean
 runs:
   using: composite
   steps:
     - name: Setup Apt for caching
       shell: bash
       run: |
-        sudo apt-get update -yq
+        if ${{ inputs.run_update }}; then
+          sudo apt-get update -yq
+        fi
         aptHash(){ echo "$1-$(apt-cache policy "$1" | grep -oP '(?<=Candidate:\s)(.+)')"; }
         echo "packagesHash=$(echo "${{ inputs.packages }}" | xargs -rn1 | tr '\n' '-'  | md5sum | cut -f 1 -d ' ')" >> $GITHUB_ENV
     - name: Cache deb files

@@ -1,0 +1,37 @@
+name: Test apt-cache Action
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-with-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test apt-cache with update
+        uses: ./
+        with:
+          packages: 'jq ipset-persistent'
+          run_update: true
+          
+      - name: Verify installation
+        run: |
+          jq --version
+          dpkg -l | grep ipset-persistent
+
+  test-without-update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Test apt-cache without update
+        uses: ./
+        with:
+          packages: 'jq ipset-persistent'
+          # run_update defaults to false
+          
+      - name: Verify installation
+        run: |
+          jq --version
+          dpkg -l | grep ipset-persistent
