@@ -47,15 +47,19 @@ This action allows you to install and cache apt packages to speed up your GitHub
 
 ## How it works
 
-1. Optionally runs `apt-get update` if `run-update` is set to `true`
+1. Optionally runs `apt-get update` if enabled
 2. Determines package versions using `apt-cache policy`
 3. Creates a hash based on package names and versions
-4. Checks if a cache exists for this hash
-5. If cache exists, copies `.deb` files to the apt archives directory (`/var/cache/apt/archives`)
-6. Installs the requested packages
-7. If no cache was found, saves the downloaded `.deb` files from `/var/cache/apt/archives` to the cache path for future runs
+4. Checks for existing cache using this hash
 
-> **Note:** The action interacts with the system's apt cache at `/var/cache/apt/archives`. It copies cached `.deb` files to this location when restoring from cache and copies newly downloaded packages from this location when saving to cache.
+> **Note:** The action copies cached `.deb` files to `/var/cache/apt/archives` when restoring from cache and copies newly downloaded packages from this location when saving to cache.
+
+## Acknowledgments
+
+This action was inspired by [Eeems-Org/apt-cache-action](https://github.com/Eeems-Org/apt-cache-action) with several improvements:
+
+- Uses SHA256 for cache hashing
+- Adds an optional `run-update` boolean parameter to skip running `apt update` when not needed
 
 ## License
 
