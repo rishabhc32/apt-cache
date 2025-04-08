@@ -15,7 +15,7 @@ jobs:
         uses: ./
         with:
           packages: 'ansible'
-          run_update: true
+          run-update: true
           
       - name: Verify installation
         run: |
@@ -30,7 +30,7 @@ jobs:
         uses: ./
         with:
           packages: ansible fail2ban
-          # run_update defaults to false
+          # run-update defaults to false
       
       - name: Verify installation
         run: |

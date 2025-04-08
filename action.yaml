@@ -12,7 +12,7 @@ inputs:
     description: Location to cache deb files
     required: false
     default: .aptcache
-  run_update:
+  run-update:
     description: Whether to run apt-get update
     required: false
     default: false
@@ -21,7 +21,7 @@ runs:
   using: composite
   steps:
     - name: Install Update
-      if: inputs.run_update == 'true'
+      if: inputs.run-update == 'true'
       shell: bash
       run: |
         sudo apt-get update -yq
