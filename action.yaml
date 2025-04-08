@@ -21,7 +21,7 @@ runs:
   using: composite
   steps:
     - name: Install Update
-      if: ${{ inputs.run_update }}
+      if: inputs.run_update == 'true'
       shell: bash
       run: |
         sudo apt-get update -yq
