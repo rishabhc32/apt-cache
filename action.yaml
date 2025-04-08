@@ -20,28 +20,47 @@ inputs:
 runs:
   using: composite
   steps:
+    - name: Install Update
+      if: ${{ inputs.run_update }}
+      shell: bash
+      run: |
+        sudo apt-get update -yq
+
     - name: Setup Apt for caching
       shell: bash
       run: |
-        if ${{ inputs.run_update }}; then
-          sudo apt-get update -yq
-        fi
-        aptHash(){ echo "$1-$(apt-cache policy "$1" | grep -oP '(?<=Candidate:\s)(.+)')"; }
-        echo "packagesHash=$(echo "${{ inputs.packages }}" | xargs -rn1 | tr '\n' '-'  | md5sum | cut -f 1 -d ' ')" >> $GITHUB_ENV
+        versions=$(for pkg in ${{ inputs.packages }}; do 
+          ver=$(apt-cache policy $pkg | grep Candidate | awk '{print $2}')
+          echo "$pkg-$ver"
+        done | sort)
+        
+        echo "Package versions: " $versions
+        
+        hash=$(echo "$versions" | tr '\n' '-' | sha256sum | cut -d ' ' -f1)
+        echo "packagesHash=$hash" >> $GITHUB_ENV
+
     - name: Cache deb files
+      id: cache
       uses: actions/cache@v4
       with:
         path: ${{ inputs.path }}
         key: apt-cache-${{ env.packagesHash }}
-        restore-keys: |
-          apt-cache-
+
     - name: Restore deb files from cache
       shell: bash
       run: |
-        sudo apt-get clean -yq
         if compgen -G "${{ inputs.path }}/*.deb" > /dev/null; then
+          echo "Attempting to restore cache from ${{ inputs.path }}"
+          echo "Cache: restored"
           sudo cp -l ${{ inputs.path }}/*.deb /var/cache/apt/archives
+        else
+          echo "Cache: not restored"
         fi
         sudo apt-get install -yq ${{ inputs.packages }}
+
+    - name: Save deb files to cache
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: |
         mkdir -p ${{ inputs.path }}
         sudo cp -l /var/cache/apt/archives/*.deb ${{ inputs.path }}
