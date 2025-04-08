@@ -38,10 +38,9 @@ runs:
         echo "Calculating package hash..."
         aptHash(){ echo "$1-$(apt-cache policy "$1" | grep -oP '(?<=Candidate:\s)(.+)')"; }
         echo "packagesHash=$(echo "${{ inputs.packages }}" | xargs -rn1 | tr '\n' '-'  | md5sum | cut -f 1 -d ' ')" >> $GITHUB_ENV
-        echo "Package hash: ${{ env.packagesHash }}"
+        echo "Package hash: $packagesHash"
         echo "::endgroup::"
     - name: Cache deb files
-      id: cache-debs
       uses: actions/cache@v4
       with:
         path: ${{ inputs.path }}
@@ -53,7 +52,6 @@ runs:
       run: |
         echo "::group::Restore and install packages"
         echo "Cache path: ${{ inputs.path }}"
-        echo "Cache hit: ${{ steps.cache-debs.outputs.cache-hit == 'true' && 'Yes' || 'No' }}"
         
         echo "Cleaning apt cache..."
         sudo apt-get clean -yq
@@ -69,6 +67,9 @@ runs:
         echo "Installing packages: ${{ inputs.packages }}..."
         sudo apt-get install -yq ${{ inputs.packages }}
         echo "Package installation completed"
+        
+        echo "Listing installed package archives..."
+        ls -la /var/cache/apt/archives/ | grep ".deb"
         
         echo "Creating cache directory..."
         mkdir -p ${{ inputs.path }}
