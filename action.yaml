@@ -1,9 +1,9 @@
-name: 'apt-cache'
+name: 'apt-package-cache'
 description: Cache Apt Packages
 author: rishabhc32
 branding:
   icon: archive
-  color: orange
+  color: blue
 inputs:
   packages:
     description: List of packages to install and cache
