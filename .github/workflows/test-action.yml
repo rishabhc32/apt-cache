@@ -12,13 +12,13 @@ jobs:
       - name: Test apt-cache with update
         uses: ./
         with:
-          packages: 'jq ipset-persistent'
+          packages: 'jq htop'
           run_update: true
           
       - name: Verify installation
         run: |
           jq --version
-          dpkg -l | grep ipset-persistent
+          htop --version
 
   test-without-update:
     runs-on: ubuntu-latest
@@ -28,10 +28,10 @@ jobs:
       - name: Test apt-cache without update
         uses: ./
         with:
-          packages: 'jq ipset-persistent'
+          packages: 'jq htop'
           # run_update defaults to false
           
       - name: Verify installation
         run: |
           jq --version
-          dpkg -l | grep ipset-persistent
+          htop --version
