@@ -52,7 +52,8 @@ This action allows you to install and cache apt packages to speed up your GitHub
 3. Creates a hash based on package names and versions
 4. Checks for existing cache using this hash
 
-> **Note:** The action copies cached `.deb` files to `/var/cache/apt/archives` when restoring from cache and copies newly downloaded packages from this location when saving to cache.
+> [!NOTE]
+> The action copies cached `.deb` files to `/var/cache/apt/archives` when restoring from cache and copies newly downloaded packages from this location when saving to cache.
 
 ## Acknowledgments
 
